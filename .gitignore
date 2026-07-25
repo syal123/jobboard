@@ -1,0 +1,21 @@
+# Maven
+backend/target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Vercel
+.vercel/
