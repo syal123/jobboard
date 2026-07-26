@@ -20,6 +20,8 @@ public class Job {
 
     private String status;
 
+    private String ownerUsername;
+
     public Long getId() {
         return id;
     }
@@ -50,5 +52,13 @@ public class Job {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getOwnerUsername() {
+        return ownerUsername;
+    }
+
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 }

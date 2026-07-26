@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jobboard.backend.model.Job;
 import com.jobboard.backend.service.JobService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/jobs")
 public class JobController {
@@ -26,23 +28,27 @@ public class JobController {
     }
 
     @GetMapping("")
-    public List<Job> getAllJobs() {
-        return jobService.getAllJobs();
+    public List<Job> getAllJobs(HttpServletRequest request) {
+        String ownerUsername = (String) request.getAttribute("authenticatedUsername");
+        return jobService.getAllJobs(ownerUsername);
     }
 
     @PostMapping("")
-    public Job createJob(@RequestBody Job job) {
-        return jobService.createJob(job);
+    public Job createJob(@RequestBody Job job, HttpServletRequest request) {
+        String ownerUsername = (String) request.getAttribute("authenticatedUsername");
+        return jobService.createJob(job, ownerUsername);
     }
 
     @PutMapping("/{id}")
-    public Job updateJob(@PathVariable Long id, @RequestBody Job job) {
-        return jobService.updateJob(id, job);
+    public Job updateJob(@PathVariable Long id, @RequestBody Job job, HttpServletRequest request) {
+        String ownerUsername = (String) request.getAttribute("authenticatedUsername");
+        return jobService.updateJob(id, job, ownerUsername);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
-        jobService.deleteJob(id);
+    public ResponseEntity<Void> deleteJob(@PathVariable Long id, HttpServletRequest request) {
+        String ownerUsername = (String) request.getAttribute("authenticatedUsername");
+        jobService.deleteJob(id, ownerUsername);
         return ResponseEntity.noContent().build();
     }
 }

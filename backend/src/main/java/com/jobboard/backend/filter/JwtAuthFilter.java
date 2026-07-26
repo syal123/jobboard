@@ -50,6 +50,9 @@ public class JwtAuthFilter implements Filter {
             return;
         }
 
+        String username = jwtUtil.extractUserName(token);
+        httpRequest.setAttribute("authenticatedUsername", username);
+
         chain.doFilter(request, response);
     }
 

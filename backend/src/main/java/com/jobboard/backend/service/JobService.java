@@ -16,16 +16,18 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll();
+    public List<Job> getAllJobs(String ownerUsername) {
+        return jobRepository.findByOwnerUsername(ownerUsername);
     }
 
-    public Job createJob(Job job) {
+    public Job createJob(Job job, String ownerUsername) {
+        job.setOwnerUsername(ownerUsername);
         return jobRepository.save(job);
     }
 
-    public Job updateJob(Long id, Job updateJob) {
+    public Job updateJob(Long id, Job updateJob, String ownerUsername) {
         Job existingJob = jobRepository.findById(id)
+                .filter(job -> job.getOwnerUsername().equals(ownerUsername))
                 .orElseThrow(() -> new RuntimeException("Job not found"));
         existingJob.setCompany(updateJob.getCompany());
         existingJob.setRole(updateJob.getRole());
@@ -33,7 +35,10 @@ public class JobService {
         return jobRepository.save(existingJob);
     }
 
-    public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
+    public void deleteJob(Long id, String ownerUsername) {
+        Job existingJob = jobRepository.findById(id)
+                .filter(job -> job.getOwnerUsername().equals(ownerUsername))
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+        jobRepository.deleteById(existingJob.getId());
     }
 }
