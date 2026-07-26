@@ -19,6 +19,7 @@ function JobsPage() {
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
+  const [editingJobId, setEditingJobId] = useState<number | null>(null);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -47,24 +48,53 @@ function JobsPage() {
     }
   };
 
+  const resetForm = () => {
+    setCompany("");
+    setRole("");
+    setStatus("");
+    setFollowUpDate("");
+    setEditingJobId(null);
+  };
+
+  const handleEditClick = (job: Job) => {
+    setEditingJobId(job.id);
+    setCompany(job.company);
+    setRole(job.role);
+    setStatus(job.status);
+    setFollowUpDate(job.followUpDate ?? "");
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
     try {
-      await apiClient.post("/jobs", {
-        company,
-        role,
-        status,
-        followUpDate: followUpDate || null,
-      });
-      setCompany("");
-      setRole("");
-      setStatus("");
-      setFollowUpDate("");
+      if (editingJobId !== null) {
+        await apiClient.put(`/jobs/${editingJobId}`, {
+          company,
+          role,
+          status,
+          followUpDate: followUpDate || null,
+        });
+      } else {
+        await apiClient.post("/jobs", {
+          company,
+          role,
+          status,
+          followUpDate: followUpDate || null,
+        });
+      }
+      resetForm();
       await fetchJobs();
     } catch (error: any) {
-      setErrorMessage(error?.response?.data?.message || "Failed to create job");
+      setErrorMessage(
+        error?.response?.data?.message ||
+          (editingJobId !== null ? "Failed to update job" : "Failed to create job")
+      );
     }
   };
 
@@ -117,7 +147,12 @@ function JobsPage() {
             />
           </label>
         </div>
-        <button type="submit">Add Job</button>
+        <button type="submit">{editingJobId !== null ? "Update Job" : "Add Job"}</button>
+        {editingJobId !== null && (
+          <button type="button" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
+            Cancel
+          </button>
+        )}
       </form>
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -143,7 +178,14 @@ function JobsPage() {
                 <td>{job.status}</td>
                 <td>{job.followUpDate ?? "-"}</td>
                 <td>
-                  <button type="button" onClick={() => handleDelete(job.id)}>
+                  <button type="button" onClick={() => handleEditClick(job)}>
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(job.id)}
+                    style={{ marginLeft: 8 }}
+                  >
                     Delete
                   </button>
                 </td>
