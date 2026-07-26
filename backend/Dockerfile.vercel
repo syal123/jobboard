@@ -14,4 +14,4 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar /app/app.jar
 
-CMD ["/opt/java/openjdk/bin/java", "-jar", "/app/app.jar"]
+CMD ["sh", "-c", "exec /opt/java/openjdk/bin/java -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-80} -jar /app/app.jar"]
