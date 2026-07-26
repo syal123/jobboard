@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,8 @@ class AuthServiceTest {
         when(userRepository.findByUserName("newuser")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User result = authService.register("newuser", "plaintextPassword");
+        User result = authService.register("newuser", "plaintextPassword", "Test", "User",
+                LocalDate.of(2000, 1, 1));
 
         assertEquals("newuser", result.getUserName());
         assertNotEquals("plaintextPassword", result.getPassword());
@@ -50,7 +52,8 @@ class AuthServiceTest {
         when(userRepository.findByUserName("existinguser")).thenReturn(Optional.of(existingUser));
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> authService.register("existinguser", "anyPassword"));
+                () -> authService.register("existinguser", "anyPassword", "Test", "User",
+                        LocalDate.of(2000, 1, 1)));
 
         assertEquals("Username already present", exception.getMessage());
     }

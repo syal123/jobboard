@@ -1,5 +1,7 @@
 package com.jobboard.backend.service;
 
+import java.time.LocalDate;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,17 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public User register(String userName, String password) {
+    public User register(String userName, String rawPassword, String firstName, String lastName,
+            LocalDate dateOfBirth) {
         if (userRepository.findByUserName(userName).isPresent()) {
             throw new RuntimeException("Username already present");
         }
         User user = new User();
         user.setUserName(userName);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setDateOfBirth(dateOfBirth);
         return userRepository.save(user);
     }
 
