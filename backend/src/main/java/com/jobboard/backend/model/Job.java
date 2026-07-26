@@ -1,5 +1,7 @@
 package com.jobboard.backend.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +23,8 @@ public class Job {
     private String status;
 
     private String ownerUsername;
+
+    private LocalDate followUpDate;
 
     public Long getId() {
         return id;
@@ -60,5 +64,13 @@ public class Job {
 
     public void setOwnerUsername(String ownerUsername) {
         this.ownerUsername = ownerUsername;
+    }
+
+    public LocalDate getFollowUpDate() {
+        return followUpDate;
+    }
+
+    public void setFollowUpDate(LocalDate followUpDate) {
+        this.followUpDate = followUpDate;
     }
 }

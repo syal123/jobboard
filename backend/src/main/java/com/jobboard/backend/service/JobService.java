@@ -32,6 +32,7 @@ public class JobService {
         existingJob.setCompany(updateJob.getCompany());
         existingJob.setRole(updateJob.getRole());
         existingJob.setStatus(updateJob.getStatus());
+        existingJob.setFollowUpDate(updateJob.getFollowUpDate());
         return jobRepository.save(existingJob);
     }
 
