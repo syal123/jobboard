@@ -23,4 +23,17 @@ public class JobService {
     public Job createJob(Job job) {
         return jobRepository.save(job);
     }
+
+    public Job updateJob(Long id, Job updateJob) {
+        Job existingJob = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+        existingJob.setCompany(updateJob.getCompany());
+        existingJob.setRole(updateJob.getRole());
+        existingJob.setStatus(updateJob.getStatus());
+        return jobRepository.save(existingJob);
+    }
+
+    public void deleteJob(Long id) {
+        jobRepository.deleteById(id);
+    }
 }
