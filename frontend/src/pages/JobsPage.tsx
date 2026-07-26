@@ -37,6 +37,16 @@ function JobsPage() {
     fetchJobs();
   }, []);
 
+  const handleDelete = async (id: number) => {
+    setErrorMessage("");
+    try {
+      await apiClient.delete(`/jobs/${id}`);
+      await fetchJobs();
+    } catch (error: any) {
+      setErrorMessage(error?.response?.data?.message || "Failed to delete job");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
@@ -122,6 +132,7 @@ function JobsPage() {
               <th>Role</th>
               <th>Status</th>
               <th>Follow Up Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -131,6 +142,11 @@ function JobsPage() {
                 <td>{job.role}</td>
                 <td>{job.status}</td>
                 <td>{job.followUpDate ?? "-"}</td>
+                <td>
+                  <button type="button" onClick={() => handleDelete(job.id)}>
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
