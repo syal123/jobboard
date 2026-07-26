@@ -10,6 +10,75 @@ interface Job {
   followUpDate: string | null;
 }
 
+const cardStyle: React.CSSProperties = {
+  maxWidth: 1400,
+  margin: "40px auto",
+  padding: 32,
+  backgroundColor: "#ffffff",
+  color: "#1e293b",
+  borderRadius: 12,
+  border: "1px solid #cbd5e1",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+};
+
+const fieldWrapperStyle: React.CSSProperties = { marginBottom: 16 };
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "8px 10px",
+  borderRadius: 6,
+  border: "1px solid #cbd5e1",
+  backgroundColor: "#f8fafc",
+  color: "#1e293b",
+  boxSizing: "border-box",
+  marginTop: 4,
+};
+
+const primaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#2563eb",
+  color: "white",
+  border: "none",
+  padding: "10px 16px",
+  borderRadius: 6,
+  cursor: "pointer",
+  fontWeight: 600,
+};
+
+const secondaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#f1f5f9",
+  color: "#1e293b",
+  border: "none",
+  padding: "10px 16px",
+  borderRadius: 6,
+  cursor: "pointer",
+  fontWeight: 600,
+  marginLeft: 8,
+};
+
+const editButtonStyle: React.CSSProperties = {
+  backgroundColor: "#2563eb",
+  color: "white",
+  border: "none",
+  padding: "6px 10px",
+  borderRadius: 6,
+  cursor: "pointer",
+};
+
+const deleteButtonStyle: React.CSSProperties = {
+  backgroundColor: "#dc2626",
+  color: "white",
+  border: "none",
+  padding: "6px 10px",
+  borderRadius: 6,
+  cursor: "pointer",
+  marginLeft: 8,
+};
+
+const tableStyle: React.CSSProperties = {
+  borderCollapse: "collapse",
+  width: "100%",
+};
+
 function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,57 +168,59 @@ function JobsPage() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto" }}>
-      <h2>Jobs</h2>
+    <div style={cardStyle}>
+      <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, color: "#dc2626" }}>💼 Jobs</h2>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div style={{ marginBottom: 10 }}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
+        <div style={fieldWrapperStyle}>
           <label>
             Company
-            <br />
             <input
               type="text"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
+              style={inputStyle}
             />
           </label>
         </div>
-        <div style={{ marginBottom: 10 }}>
+        <div style={fieldWrapperStyle}>
           <label>
             Role
-            <br />
             <input
               type="text"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+              style={inputStyle}
             />
           </label>
         </div>
-        <div style={{ marginBottom: 10 }}>
+        <div style={fieldWrapperStyle}>
           <label>
             Status
-            <br />
             <input
               type="text"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
+              style={inputStyle}
             />
           </label>
         </div>
-        <div style={{ marginBottom: 10 }}>
+        <div style={fieldWrapperStyle}>
           <label>
             Follow Up Date
-            <br />
             <input
               type="date"
               value={followUpDate}
               onChange={(e) => setFollowUpDate(e.target.value)}
+              style={inputStyle}
             />
           </label>
         </div>
-        <button type="submit">{editingJobId !== null ? "Update Job" : "Add Job"}</button>
+        <button type="submit" style={primaryButtonStyle}>
+          {editingJobId !== null ? "Update Job" : "Add Job"}
+        </button>
         {editingJobId !== null && (
-          <button type="button" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
+          <button type="button" onClick={handleCancelEdit} style={secondaryButtonStyle}>
             Cancel
           </button>
         )}
@@ -160,31 +231,31 @@ function JobsPage() {
       {loading ? (
         <p>Loading jobs...</p>
       ) : (
-        <table border={1} cellPadding={6} style={{ borderCollapse: "collapse", width: "100%" }}>
+        <table style={tableStyle}>
           <thead>
             <tr>
-              <th>Company</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Follow Up Date</th>
-              <th>Actions</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Company</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Role</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Status</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Follow Up Date</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {jobs.map((job) => (
               <tr key={job.id}>
-                <td>{job.company}</td>
-                <td>{job.role}</td>
-                <td>{job.status}</td>
-                <td>{job.followUpDate ?? "-"}</td>
-                <td>
-                  <button type="button" onClick={() => handleEditClick(job)}>
+                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.company}</td>
+                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.role}</td>
+                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.status}</td>
+                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.followUpDate ?? "-"}</td>
+                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>
+                  <button type="button" onClick={() => handleEditClick(job)} style={editButtonStyle}>
                     Edit
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(job.id)}
-                    style={{ marginLeft: 8 }}
+                    style={deleteButtonStyle}
                   >
                     Delete
                   </button>
