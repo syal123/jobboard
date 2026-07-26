@@ -28,6 +28,10 @@ public class User {
 
     private LocalDate dateOfBirth;
 
+    private int deletedJobsCount = 0;
+
+    private int editedJobsCount = 0;
+
     public Long getId() {
         return id;
     }
@@ -74,5 +78,21 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public int getDeletedJobsCount() {
+        return deletedJobsCount;
+    }
+
+    public void setDeletedJobsCount(int deletedJobsCount) {
+        this.deletedJobsCount = deletedJobsCount;
+    }
+
+    public int getEditedJobsCount() {
+        return editedJobsCount;
+    }
+
+    public void setEditedJobsCount(int editedJobsCount) {
+        this.editedJobsCount = editedJobsCount;
     }
 }

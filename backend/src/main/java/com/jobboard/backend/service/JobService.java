@@ -6,14 +6,17 @@ import org.springframework.stereotype.Service;
 
 import com.jobboard.backend.model.Job;
 import com.jobboard.backend.repository.JobRepository;
+import com.jobboard.backend.repository.UserRepository;
 
 @Service
 public class JobService {
 
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, UserRepository userRepository) {
         this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Job> getAllJobs(String ownerUsername) {
@@ -33,7 +36,14 @@ public class JobService {
         existingJob.setRole(updateJob.getRole());
         existingJob.setStatus(updateJob.getStatus());
         existingJob.setFollowUpDate(updateJob.getFollowUpDate());
-        return jobRepository.save(existingJob);
+        Job savedJob = jobRepository.save(existingJob);
+
+        userRepository.findByUserName(ownerUsername).ifPresent(user -> {
+            user.setEditedJobsCount(user.getEditedJobsCount() + 1);
+            userRepository.save(user);
+        });
+
+        return savedJob;
     }
 
     public void deleteJob(Long id, String ownerUsername) {
@@ -41,5 +51,10 @@ public class JobService {
                 .filter(job -> job.getOwnerUsername().equals(ownerUsername))
                 .orElseThrow(() -> new RuntimeException("Job not found"));
         jobRepository.deleteById(existingJob.getId());
+
+        userRepository.findByUserName(ownerUsername).ifPresent(user -> {
+            user.setDeletedJobsCount(user.getDeletedJobsCount() + 1);
+            userRepository.save(user);
+        });
     }
 }

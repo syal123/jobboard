@@ -3,6 +3,7 @@ package com.jobboard.backend.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jobboard.backend.model.Job;
 import com.jobboard.backend.repository.JobRepository;
+import com.jobboard.backend.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class JobServiceTest {
@@ -25,11 +27,14 @@ class JobServiceTest {
     @Mock
     private JobRepository jobRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     private JobService jobService;
 
     @BeforeEach
     void setUp() {
-        jobService = new JobService(jobRepository);
+        jobService = new JobService(jobRepository, userRepository);
     }
 
     @Test
@@ -42,6 +47,7 @@ class JobServiceTest {
         existingJob.setStatus("APPLIED");
         when(jobRepository.findById(1L)).thenReturn(Optional.of(existingJob));
         when(jobRepository.save(any(Job.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.findByUserName(anyString())).thenReturn(Optional.empty());
 
         Job updateData = new Job();
         updateData.setCompany("NewCompany");
@@ -77,6 +83,7 @@ class JobServiceTest {
         existingJob.setId(1L);
         existingJob.setOwnerUsername("owner");
         when(jobRepository.findById(1L)).thenReturn(Optional.of(existingJob));
+        when(userRepository.findByUserName(anyString())).thenReturn(Optional.empty());
 
         jobService.deleteJob(1L, "owner");
 

@@ -9,15 +9,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.jobboard.backend.model.Job;
+import com.jobboard.backend.model.User;
 import com.jobboard.backend.repository.JobRepository;
+import com.jobboard.backend.repository.UserRepository;
 
 @Service
 public class DashboardService {
 
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
-    public DashboardService(JobRepository jobRepository) {
+    public DashboardService(JobRepository jobRepository, UserRepository userRepository) {
         this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
     }
 
     public DashboardSummary getSummary(String ownerUsername) {
@@ -34,10 +38,13 @@ public class DashboardService {
                 .sorted(Comparator.comparing(Job::getFollowUpDate))
                 .collect(Collectors.toList());
 
-        return new DashboardSummary(totalApplications, statusCounts, upcomingFollowUps);
+        User user = userRepository.findByUserName(ownerUsername).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new DashboardSummary(totalApplications, statusCounts, upcomingFollowUps,
+                user.getDeletedJobsCount(), user.getEditedJobsCount());
     }
 
     public record DashboardSummary(long totalApplications, Map<String, Long> statusCounts,
-            List<Job> upcomingFollowUps) {
+            List<Job> upcomingFollowUps, int deletedJobsCount, int editedJobsCount) {
     }
 }
