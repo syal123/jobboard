@@ -7,15 +7,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jobboard.backend.model.User;
 import com.jobboard.backend.service.AuthService;
+import com.jobboard.backend.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtUtil jwtUtil) {
         this.authService = authService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register")
@@ -24,10 +27,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody AuthRequest request) {
-        return authService.login(request.userName(), request.password());
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        User user = authService.login(request.userName(), request.password());
+        String token = jwtUtil.generateToken(user.getUserName());
+        return new AuthResponse(token);
     }
 
     public record AuthRequest(String userName, String password) {
+    }
+
+    public record AuthResponse(String token) {
     }
 }
