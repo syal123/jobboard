@@ -149,10 +149,10 @@ function RegisterPage() {
           </label>
         </div>
         <button type="submit" style={buttonStyle} disabled={submitting}>
-          {submitting ? "Registering..." : "Register"}
+          {submitting ? "Please wait..." : "Register"}
         </button>
       </form>
-      {submitting && <p style={{ color: "#64748b" }}>This can take a few seconds on first use, please wait...</p>}
+      {submitting && <p style={{ color: "#64748b" }}>Please wait...</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </div>

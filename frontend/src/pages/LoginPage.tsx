@@ -91,10 +91,10 @@ function LoginPage() {
           </label>
         </div>
         <button type="submit" style={buttonStyle} disabled={submitting}>
-          {submitting ? "Logging in..." : "Login"}
+          {submitting ? "Please wait..." : "Login"}
         </button>
       </form>
-      {submitting && <p style={{ color: "#64748b" }}>This can take a few seconds on first use, please wait...</p>}
+      {submitting && <p style={{ color: "#64748b" }}>Please wait...</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </div>
