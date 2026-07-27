@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -91,6 +92,7 @@ const rowListStyle: React.CSSProperties = {
 };
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -389,6 +391,14 @@ function DashboardPage() {
           )}
         </div>
       )}
+
+      <button
+        type="button"
+        className="dashboard-fab"
+        onClick={() => navigate("/jobs")}
+      >
+        💼 Jobs
+      </button>
     </div>
   );
 }
