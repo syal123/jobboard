@@ -36,6 +36,10 @@ interface DashboardSummary {
   editedJobsCount: number;
   editedJobs: Job[];
   deletedJobs: DeletedJob[];
+  interviewRate: number;
+  offerRate: number;
+  responseRate: number;
+  dueFollowUps: Job[];
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -266,6 +270,30 @@ function DashboardPage() {
             <Bar dataKey="count" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+      <div style={{ marginBottom: 32 }}>
+        <h3 style={sectionHeadingStyle}>Insights</h3>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ ...statCardStyle, minWidth: 160, cursor: "default", borderTop: "3px solid #16a34a" }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#16a34a" }}>
+              {summary ? `${summary.responseRate.toFixed(0)}%` : "-"}
+            </div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>Response Rate</div>
+          </div>
+          <div style={{ ...statCardStyle, minWidth: 160, cursor: "default", borderTop: "3px solid #f97316" }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#f97316" }}>
+              {summary ? `${summary.interviewRate.toFixed(0)}%` : "-"}
+            </div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>Interview Rate</div>
+          </div>
+          <div style={{ ...statCardStyle, minWidth: 160, cursor: "default", borderTop: "3px solid #2563eb" }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#2563eb" }}>
+              {summary ? `${summary.offerRate.toFixed(0)}%` : "-"}
+            </div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>Offer Rate</div>
+          </div>
+        </div>
       </div>
 
       <div style={{ marginBottom: selectedFilter !== null ? 32 : 0 }}>

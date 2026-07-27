@@ -51,7 +51,7 @@ function LoginPage() {
     try {
       const response = await apiClient.post("/auth/login", { userName, password });
       localStorage.setItem("token", response.data.token);
-      setSuccessMessage("Logged in successfully! Token saved.");
+      setSuccessMessage("Login successful!");
       setTimeout(() => {
         navigate("/jobs");
       }, 1200);

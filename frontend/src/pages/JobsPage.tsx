@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
+
+const STATUS_COLORS: Record<string, string> = {
+  Applied: "#2563eb",
+  Interview: "#f97316",
+  Offer: "#16a34a",
+  Rejected: "#dc2626",
+};
+
+const DEFAULT_STATUS_COLOR = "#64748b";
+
+function getStatusColor(status: string): string {
+  return STATUS_COLORS[status] ?? DEFAULT_STATUS_COLOR;
+}
 
 interface Job {
   id: number;
@@ -74,12 +88,8 @@ const deleteButtonStyle: React.CSSProperties = {
   marginLeft: 8,
 };
 
-const tableStyle: React.CSSProperties = {
-  borderCollapse: "collapse",
-  width: "100%",
-};
-
 function JobsPage() {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -167,9 +177,29 @@ function JobsPage() {
     }
   };
 
+  const today = new Date().toISOString().slice(0, 10);
+  const dueFollowUps = jobs.filter((job) => job.followUpDate && job.followUpDate <= today);
+
   return (
     <div style={cardStyle}>
       <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, color: "#dc2626" }}>💼 Jobs</h2>
+
+      {dueFollowUps.length > 0 && (
+        <div
+          style={{
+            backgroundColor: "#fffbeb",
+            border: "1px solid #fde68a",
+            color: "#92400e",
+            borderRadius: 8,
+            padding: "12px 16px",
+            marginBottom: 20,
+            fontWeight: 600,
+          }}
+        >
+          ⏰ You have {dueFollowUps.length} follow-up{dueFollowUps.length > 1 ? "s" : ""} due:{" "}
+          {dueFollowUps.map((job) => `${job.company} (${job.role})`).join(", ")}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
         <div style={fieldWrapperStyle}>
@@ -197,12 +227,17 @@ function JobsPage() {
         <div style={fieldWrapperStyle}>
           <label>
             Status
-            <input
-              type="text"
+            <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               style={inputStyle}
-            />
+            >
+              <option value="">Select status</option>
+              <option value="Applied">Applied</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+            </select>
           </label>
         </div>
         <div style={fieldWrapperStyle}>
@@ -231,40 +266,57 @@ function JobsPage() {
       {loading ? (
         <p>Loading jobs...</p>
       ) : (
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Company</th>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Role</th>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Status</th>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Follow Up Date</th>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "2px solid #e2e8f0" }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {jobs.map((job) => (
-              <tr key={job.id}>
-                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.company}</td>
-                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.role}</td>
-                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.status}</td>
-                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>{job.followUpDate ?? "-"}</td>
-                <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>
-                  <button type="button" onClick={() => handleEditClick(job)} style={editButtonStyle}>
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(job.id)}
-                    style={deleteButtonStyle}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div className="jobs-table-wrapper">
+          <table className="jobs-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Follow Up Date</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {jobs.map((job) => (
+                <tr key={job.id}>
+                  <td>{job.company}</td>
+                  <td>{job.role}</td>
+                  <td>
+                    <span
+                      className="status-badge"
+                      style={{ backgroundColor: getStatusColor(job.status) }}
+                    >
+                      {job.status}
+                    </span>
+                  </td>
+                  <td>{job.followUpDate ?? "-"}</td>
+                  <td>
+                    <button type="button" onClick={() => handleEditClick(job)} style={editButtonStyle}>
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(job.id)}
+                      style={deleteButtonStyle}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+
+      <button
+        type="button"
+        className="dashboard-fab"
+        onClick={() => navigate("/dashboard")}
+      >
+        📊 Dashboard
+      </button>
     </div>
   );
 }

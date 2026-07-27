@@ -51,12 +51,26 @@ public class DashboardService {
 
         List<DeletedJob> deletedJobs = deletedJobRepository.findByOwnerUsernameOrderByDeletedAtDesc(ownerUsername);
 
+        long interviewCount = statusCounts.getOrDefault("Interview", 0L);
+        long offerCount = statusCounts.getOrDefault("Offer", 0L);
+        double interviewRate = totalApplications == 0 ? 0.0 : (interviewCount * 100.0) / totalApplications;
+        double offerRate = totalApplications == 0 ? 0.0 : (offerCount * 100.0) / totalApplications;
+        double responseRate = totalApplications == 0 ? 0.0
+                : ((interviewCount + offerCount) * 100.0) / totalApplications;
+
+        List<Job> dueFollowUps = jobs.stream()
+                .filter(job -> job.getFollowUpDate() != null && job.getFollowUpDate().isBefore(today.plusDays(1)))
+                .sorted(Comparator.comparing(Job::getFollowUpDate))
+                .collect(Collectors.toList());
+
         return new DashboardSummary(totalApplications, statusCounts, upcomingFollowUps,
-                user.getDeletedJobsCount(), user.getEditedJobsCount(), editedJobs, deletedJobs);
+                user.getDeletedJobsCount(), user.getEditedJobsCount(), editedJobs, deletedJobs,
+                interviewRate, offerRate, responseRate, dueFollowUps);
     }
 
     public record DashboardSummary(long totalApplications, Map<String, Long> statusCounts,
             List<Job> upcomingFollowUps, int deletedJobsCount, int editedJobsCount,
-            List<Job> editedJobs, List<DeletedJob> deletedJobs) {
+            List<Job> editedJobs, List<DeletedJob> deletedJobs,
+            double interviewRate, double offerRate, double responseRate, List<Job> dueFollowUps) {
     }
 }
