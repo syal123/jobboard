@@ -109,6 +109,11 @@ function JobsPage() {
   // to edit that job instead - this what switched the button text between "Add Job" and "Update Job".
   const [editingJobId, setEditingJobId] = useState<number | null>(null);
 
+  // Tracks whether the add/update job request is currently in flight. Used to disable the submit button and
+  // relabel it, so clicking "Add Job" multiple times in a row (e.g. while the request is still processing)
+  // can't create several duplicate jobs from one intended submission.
+  const [submitting, setSubmitting] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -186,6 +191,13 @@ function JobsPage() {
     e.preventDefault();
     setErrorMessage("");
 
+    // Guards against double-submits: if a request is already in flight, ignore any further clicks
+    // instead of firing off a second (or third) identical request.
+    if (submitting) {
+      return;
+    }
+
+    setSubmitting(true);
     try {
       if (editingJobId !== null) {
         await apiClient.put(`/jobs/${editingJobId}`, {
@@ -209,6 +221,8 @@ function JobsPage() {
         error?.response?.data?.message ||
           (editingJobId !== null ? "Failed to update job" : "Failed to create job")
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -357,11 +371,13 @@ function JobsPage() {
           </p>
         )}
 
-        <button type="submit" style={primaryButtonStyle}>
-          {editingJobId !== null ? "Update Job" : "Add Job"}
+        <button type="submit" style={primaryButtonStyle} disabled={submitting}>
+          {/* Disabled + relabeled while the add/update request is in progress, so repeated clicks
+              can't create duplicate jobs from a single intended submission. */}
+          {submitting ? "Please wait..." : editingJobId !== null ? "Update Job" : "Add Job"}
         </button>
         {editingJobId !== null && (
-          <button type="button" onClick={handleCancelEdit} style={secondaryButtonStyle}>
+          <button type="button" onClick={handleCancelEdit} style={secondaryButtonStyle} disabled={submitting}>
             Cancel
           </button>
         )}
