@@ -103,6 +103,24 @@ function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  type SortKey = "company" | "role" | "status" | "followUpDate";
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDirection("asc");
+    }
+  };
+
+  const sortIndicator = (key: SortKey) => {
+    if (sortKey !== key) return "";
+    return sortDirection === "asc" ? " ▲" : " ▼";
+  };
+
   const fetchJobs = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -193,7 +211,7 @@ function JobsPage() {
         job.role.trim().toLowerCase() === role.trim().toLowerCase()
     );
 
-  const visibleJobs = jobs.filter((job) => {
+  const filteredJobs = jobs.filter((job) => {
     const matchesStatus = statusFilter === "" || job.status === statusFilter;
     const term = searchTerm.trim().toLowerCase();
     const matchesSearch =
@@ -202,6 +220,39 @@ function JobsPage() {
       job.role.toLowerCase().includes(term);
     return matchesStatus && matchesSearch;
   });
+
+  const visibleJobs = [...filteredJobs].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aValue = a[sortKey] ?? "";
+    const bValue = b[sortKey] ?? "";
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const handleExportCsv = () => {
+    const headers = ["Company", "Role", "Status", "Follow Up Date"];
+    const rows = visibleJobs.map((job) => [
+      job.company,
+      job.role,
+      job.status,
+      job.followUpDate ?? "",
+    ]);
+    const escapeCell = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map(escapeCell).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `job-applications-${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div style={cardStyle}>
@@ -293,7 +344,7 @@ function JobsPage() {
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16, alignItems: "center" }}>
         <input
           type="text"
           placeholder="Search by company or role..."
@@ -312,19 +363,36 @@ function JobsPage() {
           <option value="Offer">Offer</option>
           <option value="Rejected">Rejected</option>
         </select>
+        {jobs.length > 0 && (
+          <button type="button" onClick={handleExportCsv} style={secondaryButtonStyle}>
+            ⬇ Export CSV
+          </button>
+        )}
       </div>
 
       {loading ? (
         <p>Loading jobs...</p>
+      ) : jobs.length === 0 ? (
+        <p style={{ padding: 16, color: "#64748b", textAlign: "center" }}>
+          You haven't added any applications yet — add your first one above to get started.
+        </p>
       ) : (
         <div className="jobs-table-wrapper">
           <table className="jobs-table">
             <thead>
               <tr>
-                <th>Company</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Follow Up Date</th>
+                <th style={{ cursor: "pointer" }} onClick={() => handleSort("company")}>
+                  Company{sortIndicator("company")}
+                </th>
+                <th style={{ cursor: "pointer" }} onClick={() => handleSort("role")}>
+                  Role{sortIndicator("role")}
+                </th>
+                <th style={{ cursor: "pointer" }} onClick={() => handleSort("status")}>
+                  Status{sortIndicator("status")}
+                </th>
+                <th style={{ cursor: "pointer" }} onClick={() => handleSort("followUpDate")}>
+                  Follow Up Date{sortIndicator("followUpDate")}
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
