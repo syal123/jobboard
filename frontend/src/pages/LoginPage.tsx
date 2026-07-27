@@ -42,12 +42,14 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMessage("");
     setErrorMessage("");
 
+    setSubmitting(true);
     try {
       const response = await apiClient.post("/auth/login", { userName, password });
       localStorage.setItem("token", response.data.token);
@@ -57,6 +59,8 @@ function LoginPage() {
       }, 1200);
     } catch (error: any) {
       setErrorMessage(error?.response?.data?.message || "Login failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -86,10 +90,11 @@ function LoginPage() {
             />
           </label>
         </div>
-        <button type="submit" style={buttonStyle}>
-          Login
+        <button type="submit" style={buttonStyle} disabled={submitting}>
+          {submitting ? "Logging in..." : "Login"}
         </button>
       </form>
+      {submitting && <p style={{ color: "#64748b" }}>This can take a few seconds on first use, please wait...</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </div>

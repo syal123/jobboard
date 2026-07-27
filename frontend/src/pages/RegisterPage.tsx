@@ -46,6 +46,7 @@ function RegisterPage() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +58,7 @@ function RegisterPage() {
       return;
     }
 
+    setSubmitting(true);
     try {
       await apiClient.post("/auth/register", {
         userName,
@@ -71,6 +73,8 @@ function RegisterPage() {
       }, 1200);
     } catch (error: any) {
       setErrorMessage(error?.response?.data?.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -144,10 +148,11 @@ function RegisterPage() {
             />
           </label>
         </div>
-        <button type="submit" style={buttonStyle}>
-          Register
+        <button type="submit" style={buttonStyle} disabled={submitting}>
+          {submitting ? "Registering..." : "Register"}
         </button>
       </form>
+      {submitting && <p style={{ color: "#64748b" }}>This can take a few seconds on first use, please wait...</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </div>
