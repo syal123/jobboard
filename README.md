@@ -141,7 +141,7 @@ Deployment credentials (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID_BACK
 ## Notable Engineering Decisions
 
 - **Cold-start tuning:** the backend runs on Vercel's container-image Functions, which enforce a 15-second startup window before giving up on a cold instance. Spring Boot's JVM startup was tuned significantly (JVM flags, removing unused dependencies, skipping eager Hibernate metadata inspection, non-blocking entropy source for password hashing) to reliably fit inside that window.
-- **Frontend retry logic:** requests that fail with no server response at all (as can happen if they land during a cold start) are automatically retried a few times before surfacing an error, rather than showing a false failure to the user.
+- **Frontend retry logic:** requests that fail during a cold start — whether the connection drops entirely with no response, or Vercel returns its own platform-level error (500/502/503/504) because the container didn't wake up in time — are automatically retried a few times before surfacing an error, rather than showing a false failure to the user.
 - **Business vs. system errors:** expected failures (duplicate username, wrong credentials, job not found) are raised as a dedicated `BusinessException` and mapped to a clean 400 response with the real message — instead of an opaque 500 error and a misleading stack trace in the logs.
 
 ## How AI was used
