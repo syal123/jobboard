@@ -8,6 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+// Deleting a Job removes it from the "job" table entirely, but the dashboard stills needs to show deletion
+// history. so right before the deletion happens, the job's basic details get copied here first.
+// nothing ever deletes from this table "deleted_job". it is meant to be a permanent log, unlike the live 
+// "job" table it is copied from.
 @Entity
 @Table(name = "deleted_job")
 public class DeletedJob {

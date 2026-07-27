@@ -11,6 +11,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+
+// Handles creating and checking the login tokens (JWTs). When a user logs in, generateToken() gives
+// them a signed token to use on future requests. isTokenValid() and extractUserName() are used to 
+// check that token and figure out who's making the reuqest. Tokens expire after 24 hours, 
+// after which the user has to log in again.
 @Component
 public class JwtUtil {
 

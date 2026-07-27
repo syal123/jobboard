@@ -1,3 +1,5 @@
+# The CI/CD pipeline - runs backend tests and a frontend build on every push, then deploys both to Vercel automatically when it's pushed to main.
+
 name: CI
 
 on:

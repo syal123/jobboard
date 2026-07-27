@@ -1,3 +1,5 @@
+/* Shared visual styling for the whole app - base colors/fonts, plus the table, stat cards, status badges, 
+and floating button used across pages. */
 :root {
   --text: #1e293b;
   --text-h: #0f172a;
@@ -84,6 +86,7 @@ code {
   background: var(--code-bg);
 }
 
+/* Hover/press animation for clickable dashboard stat cards - lifts slightly on hover so it's obvious they can be clicked */
 .stat-card-clickable {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -97,6 +100,9 @@ code {
   transform: translateY(0);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
+/* Styling for the applications table on the Jobs page - header colors, row striping, and a highlight on hover
+ so rows are easy to scan */
 
 .jobs-table-wrapper {
   border: 1px solid #e2e8f0;
@@ -141,6 +147,8 @@ code {
   background-color: #fef2f2;
 }
 
+/* The colored pill next to each job's status (Applied/Interview/Offer/Rejected). The actual color per status
+is set inline in JobsPage,.tsx - this just defines the pill shape. */
 .status-badge {
   display: inline-block;
   padding: 4px 10px;
@@ -151,6 +159,8 @@ code {
   white-space: nowrap;
 }
 
+/* The floating round button in the bottom-right corner (used for the dashboard button on Jobs page and 
+button on Dashboard page). */
 .dashboard-fab {
   position: fixed;
   bottom: 24px;

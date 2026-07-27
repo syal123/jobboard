@@ -23,6 +23,10 @@ public class JwtAuthFilter implements Filter {
         this.jwtUtil = jwtUtil;
     }
 
+/* this method runs on every request before it reaches any controller. It acts as a security check: it looks
+for valid login token in the request, and blocks anything without one (except register/login, since you can't
+have a token yet if you haven't logged in). This is what keeps one user from being able to see or modify another
+user's data. */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

@@ -1,3 +1,5 @@
+// The Register Page - lets a new user create an account with their basic details and password.
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
@@ -46,6 +48,10 @@ function RegisterPage() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Tracks whether the request is currently in flight. Used to disable the button and show "Please wait..."
+  // This is important because a request can take several seconds and silently retry in the background
+  // if the backend was asleep, so without this button would look broken and invite the user to click button repeatedly.
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1,10 +1,9 @@
 package com.jobboard.backend.exception;
 
-/**
- * Represents an expected, user-facing failure (duplicate username, wrong
- * credentials, resource not found, etc.) as opposed to an unexpected bug.
- * Handled globally to return a clean 4xx response with the message intact,
- * instead of a generic 500 with the real reason hidden from the client.
+/*
+ A special error type used for expected, user-facing problems (like a duplicate username or password) - 
+ as opposed to real bugs. Anything thrown as a BusinessException gets caught by GlobalExceptionHandler and
+ turned into a clean response instead of a scary generic server error.
  */
 public class BusinessException extends RuntimeException {
 

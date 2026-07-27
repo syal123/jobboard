@@ -1,3 +1,6 @@
+/* Automated tests for JwtUtil - checks that a token generated for a username can be read back correctly,
+that a freshly made token is valid, and the garbage input is correctly rejected as invalid */
+
 package com.jobboard.backend.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

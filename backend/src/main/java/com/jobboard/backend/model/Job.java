@@ -8,6 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+
+/*
+ Represents one job application a user has logged, and defines the "job" database table (each field here 
+ becomes a column). This is the central piece of data the app is built around - the Jobs table, the dashboard
+ stats, the reminder, and CSV export are all just different views of rows shaped like this. Just the
+ data shape; the actual create/update/delete logic lives in JobService.
+*/
 @Entity
 @Table(name = "job")
 public class Job {

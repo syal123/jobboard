@@ -9,6 +9,9 @@ import com.jobboard.backend.service.DashboardService.DashboardSummary;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+
+// Exposes the URL the Dashboard page calls (/api/dashboard) to get all its stats and lists. Just forwards 
+// to DashboardService, which does all the actual calculation
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {

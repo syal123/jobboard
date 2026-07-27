@@ -9,6 +9,10 @@ import com.jobboard.backend.exception.BusinessException;
 import com.jobboard.backend.model.User;
 import com.jobboard.backend.repository.UserRepository;
 
+
+// Handles the actual rules around registering and logging in: makes sure a username isn't already taken,
+// encrypts passwords before saving them (the real passwrod is never stored, only its hash), and checks
+// a login attempt by comparing against that hash rather than comapring plain text.
 @Service
 public class AuthService {
 

@@ -1,3 +1,7 @@
+
+/* This is the entry point that boots the whole spring application. This is where Spring Boot starts up and
+wires everything together. */
+
 package com.jobboard.backend;
 
 import org.springframework.boot.SpringApplication;

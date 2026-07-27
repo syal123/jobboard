@@ -12,6 +12,10 @@ import com.jobboard.backend.repository.DeletedJobRepository;
 import com.jobboard.backend.repository.JobRepository;
 import com.jobboard.backend.repository.UserRepository;
 
+// Handles creating, editing, and deleting job applications, plus the side effects that go with each:
+// editing a job flips its "edited" flag on, and deleting a job first copies its details into DeletedJob
+// (the permanent record) before actually removing the real row.
+
 @Service
 public class JobService {
 

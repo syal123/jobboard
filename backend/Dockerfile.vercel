@@ -1,3 +1,6 @@
+# Builds the backend into a Docker container for Vercel, and launched it with JVM flags tuned to start fast
+# enough to survive Vercel's cold-start timeout.
+
 FROM maven:3.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
@@ -22,4 +25,4 @@ COPY --from=build --chown=spring:spring /app/target/*.jar /app/app.jar
 
 USER spring
 
-ENTRYPOINT ["sh", "-c", "exec ${JAVA_HOME}/bin/java -Xmx256m -Xss512k -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xshare:auto -Dspring.jmx.enabled=false -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "exec ${JAVA_HOME}/bin/java -Xmx256m -Xss512k -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xshare:auto -Dspring.jmx.enabled=false -jar /app/app.jar"]

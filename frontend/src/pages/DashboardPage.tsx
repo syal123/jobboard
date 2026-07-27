@@ -1,3 +1,6 @@
+/* The Dashboard page - shows stat cards, a status bar chart, response/interview/offer/rates, and lets the 
+user click a stat to drill into the jobs behind that number.*/
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -100,6 +103,9 @@ function DashboardPage() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
   useEffect(() => {
+  // Loads two things at once when the page opens: the calculated dashboard numbers (from/dashboard) and the
+  // raw list of jobs (from/ jobs). The raw list is needed separately so clicking a stat card can show actual
+  // jobs behind the number.
     const fetchData = async () => {
       setLoading(true);
       setErrorMessage("");
@@ -138,6 +144,8 @@ function DashboardPage() {
     );
   }
 
+  //Turns the status counts (Applied, Interview, Offer, Rejected, Edited, Deleted) into the shape the bar chart
+  // library expects: a list of {status, count} objects.
   const statusChartData = summary
     ? [
         ...Object.entries(summary.statusCounts).map(([status, count]) => ({ status, count })),
@@ -153,6 +161,9 @@ function DashboardPage() {
     rightLabel: string;
   }
 
+  // Decides which jobs to list below the charts, based on which stat card was clicked. "All" shows every job
+  // a status name shows just that status, and "EDITED"/"DELETED" pull from their own separate lists since
+  // edited/deleted jobs aren't part of the normal status breakdown.
   const displayRows: DisplayRow[] =
     selectedFilter === null
       ? []

@@ -9,6 +9,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/*
+ Represents one registeres user account, and defines the "users" database table (each field here becomes a column).
+ Holds login credentials (the password is stored hashed, never in plain text) plus basic profile info,
+ add two running counters used on the dashboard. This class is just the data shape - the actual 
+ login/registration logic lives in AuthService.
+*/
 @Entity
 @Table(name = "users")
 public class User {

@@ -16,6 +16,9 @@ import com.jobboard.backend.repository.DeletedJobRepository;
 import com.jobboard.backend.repository.JobRepository;
 import com.jobboard.backend.repository.UserRepository;
 
+// Computes everything shown on the dashboard - status counts, response/interview/offer rate, which
+// follow-ups are due, and the edited/deleted job lists. None of this is stored anywhere; it is all 
+// recalculated live form scratch, every single time this method is called.
 @Service
 public class DashboardService {
 

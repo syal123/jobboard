@@ -11,6 +11,9 @@ import com.jobboard.backend.model.User;
 import com.jobboard.backend.service.AuthService;
 import com.jobboard.backend.util.JwtUtil;
 
+
+// Exposes the register and login URLs (/api/auth/register, /api/auth/login). Kept intentionally thin - 
+// it just reads the incoming request and hands it straight to AuthService, which does the actual work
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

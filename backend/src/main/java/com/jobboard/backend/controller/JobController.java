@@ -17,6 +17,9 @@ import com.jobboard.backend.service.JobService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+
+// Exposes the URLs for creating, listing, editing, and deleting job applications (/api/jobs). Just forwards
+// each request to JobService - no real logic lives here, only routing.
 @RestController
 @RequestMapping("/api/jobs")
 public class JobController {

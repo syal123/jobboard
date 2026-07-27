@@ -1,3 +1,6 @@
+/* The left-side naviagtion menu shown on every page - links to Register/Login/Jobs/Dashboard, plus a logout
+button that clears the login taken.*/
+
 import { Link, useNavigate } from "react-router-dom";
 
 const SIDEBAR_WIDTH = 220;

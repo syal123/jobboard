@@ -1,3 +1,6 @@
+/* Automated tests for JobService - checks the creating, updating, and deleting a job works correctly (including
+that deletes get archived to DeletedJob and a user can't touch another user's job), all without a real database */
+
 package com.jobboard.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

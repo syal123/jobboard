@@ -1,3 +1,6 @@
+/* Automated tests for AuthService - checks the registering hashes the password and blocks duplicate usernames,
+and that login accepts correct credentials and reject wrong ones, all without touching a real database */
+
 package com.jobboard.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

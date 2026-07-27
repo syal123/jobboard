@@ -1,3 +1,6 @@
+/* The jobs page - lets the user add, edit, delete, search/filter, sort, and export their job applications,
+and warns about due follow-ups and possible duplicates. */
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
@@ -90,6 +93,8 @@ const deleteButtonStyle: React.CSSProperties = {
 
 function JobsPage() {
   const navigate = useNavigate();
+  // Holds the list of jobs fetched from the backend, plus loading/error state for showing a spinner or 
+  // message whike the reuqest is in flight.
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -98,6 +103,9 @@ function JobsPage() {
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
+  
+  // editingJobId is null when the form is for adding a new job. when it holds an id, the same form is reused
+  // to edit that job instead - this what switched the button text between "Add Job" and "Update Job".
   const [editingJobId, setEditingJobId] = useState<number | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -107,6 +115,8 @@ function JobsPage() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
+  // Clicking a column header sorts by that column. Clicking the same header again flips between ascending 
+  // and descending instead of resorting fresh.
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -121,6 +131,8 @@ function JobsPage() {
     return sortDirection === "asc" ? " ▲" : " ▼";
   };
 
+  // Re-fetches the job list from the backend. Called on first page load, and again after every add/edit/delete
+  // so the always reflects reality.
   const fetchJobs = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -156,6 +168,7 @@ function JobsPage() {
     setEditingJobId(null);
   };
 
+  // Pre-fills the form with an existing job's details and switches the from into "edit mode" by setting editingJobId.
   const handleEditClick = (job: Job) => {
     setEditingJobId(job.id);
     setCompany(job.company);
@@ -199,8 +212,13 @@ function JobsPage() {
   };
 
   const today = new Date().toISOString().slice(0, 10);
+  // A job is "due" once its follow-up date has arrived or passed. This drives the warning banner at the top of the page
+  // reminding the user to act.
   const dueFollowUps = jobs.filter((job) => job.followUpDate && job.followUpDate <= today);
 
+  //True if the company+role typed into the form already exists elsewhere in the user's job list. Warns before
+  //they accidently log the same application twice. Exlcudes the job currently being edited, so editing a 
+  // jon doesn't flag itself as a duplicate of itself.
   const isDuplicate =
     company.trim() !== "" &&
     role.trim() !== "" &&
@@ -211,6 +229,8 @@ function JobsPage() {
         job.role.trim().toLowerCase() === role.trim().toLowerCase()
     );
 
+  // Narrows the job list down to whatever matches the search box(company or role name) and the status dropdown.
+  // Doesn't touch the actual data - just changes what's shown.
   const filteredJobs = jobs.filter((job) => {
     const matchesStatus = statusFilter === "" || job.status === statusFilter;
     const term = searchTerm.trim().toLowerCase();
@@ -230,6 +250,9 @@ function JobsPage() {
     return 0;
   });
 
+  // Builds a CSV file from whatever's currently visible (after search/filter/sort) and triggers a browser 
+  // download. No backend involved. The file is built entirely in the browser and thrown away right after 
+  // download.
   const handleExportCsv = () => {
     const headers = ["Company", "Role", "Status", "Follow Up Date"];
     const rows = visibleJobs.map((job) => [

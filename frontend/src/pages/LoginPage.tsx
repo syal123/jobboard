@@ -1,3 +1,5 @@
+// The login page - lets an existing user sign in and stores the login token they get back.
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
@@ -42,6 +44,10 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Tracks whether the login request is currently in flight. Used to disable the button and show "Please wait.."
+  // Because a request can take several seconds and silently retry in the background if the backend was asleep
+  // so without this the button would look broken and invite repeated clicks.
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,6 +97,8 @@ function LoginPage() {
           </label>
         </div>
         <button type="submit" style={buttonStyle} disabled={submitting}>
+          {/* Disabled + relabeled while the login request is in progess, so the user can't fire off a 
+            second click during a slow/retired request. */}
           {submitting ? "Please wait..." : "Login"}
         </button>
       </form>
