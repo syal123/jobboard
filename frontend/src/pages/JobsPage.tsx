@@ -197,6 +197,13 @@ function JobsPage() {
       return;
     }
 
+    // Required-field check, done here before ever calling the backend, so clicking "Add Job" with an
+    // empty form shows an immediate error instead of creating a blank job entry.
+    if (company.trim() === "" || role.trim() === "" || status.trim() === "") {
+      setErrorMessage("Company, Role, and Status are required");
+      return;
+    }
+
     setSubmitting(true);
     try {
       if (editingJobId !== null) {

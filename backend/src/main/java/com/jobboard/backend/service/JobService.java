@@ -35,6 +35,7 @@ public class JobService {
     }
 
     public Job createJob(Job job, String ownerUsername) {
+        validateJob(job);
         job.setOwnerUsername(ownerUsername);
         return jobRepository.save(job);
     }
@@ -43,6 +44,7 @@ public class JobService {
         Job existingJob = jobRepository.findById(id)
                 .filter(job -> job.getOwnerUsername().equals(ownerUsername))
                 .orElseThrow(() -> new BusinessException("Job not found"));
+        validateJob(updateJob);
         existingJob.setCompany(updateJob.getCompany());
         existingJob.setRole(updateJob.getRole());
         existingJob.setStatus(updateJob.getStatus());
@@ -76,5 +78,16 @@ public class JobService {
             user.setDeletedJobsCount(user.getDeletedJobsCount() + 1);
             userRepository.save(user);
         });
+    }
+
+    // Rejects a job with missing required fields (blank company, role, or status) before it ever reaches the
+    // database - this is the last line of defense even if a request somehow skips the frontend's own check,
+    // e.g. a direct API call. Thrown as a BusinessException so it comes back as a clean 400, not a 500.
+    private void validateJob(Job job) {
+        if (job.getCompany() == null || job.getCompany().isBlank()
+                || job.getRole() == null || job.getRole().isBlank()
+                || job.getStatus() == null || job.getStatus().isBlank()) {
+            throw new BusinessException("Company, Role, and Status are required");
+        }
     }
 }
