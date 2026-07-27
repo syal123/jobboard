@@ -48,6 +48,7 @@ interface DashboardSummary {
 
 const STATUS_COLORS: Record<string, string> = {
   Applied: "#2563eb",
+  Ongoing: "#8b5cf6",
   Interview: "#f97316",
   Offer: "#16a34a",
   Rejected: "#dc2626",
@@ -144,7 +145,7 @@ function DashboardPage() {
     );
   }
 
-  //Turns the status counts (Applied, Interview, Offer, Rejected, Edited, Deleted) into the shape the bar chart
+  //Turns the status counts (Applied, Ongoing, Interview, Offer, Rejected, Edited, Deleted) into the shape the bar chart
   // library expects: a list of {status, count} objects.
   const statusChartData = summary
     ? [

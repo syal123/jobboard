@@ -147,7 +147,7 @@ code {
   background-color: #fef2f2;
 }
 
-/* The colored pill next to each job's status (Applied/Interview/Offer/Rejected). The actual color per status
+/* The colored pill next to each job's status (Applied/Ongoing/Interview/Offer/Rejected). The actual color per status
 is set inline in JobsPage,.tsx - this just defines the pill shape. */
 .status-badge {
   display: inline-block;

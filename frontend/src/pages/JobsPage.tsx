@@ -7,6 +7,7 @@ import apiClient from "../api/client";
 
 const STATUS_COLORS: Record<string, string> = {
   Applied: "#2563eb",
+  Ongoing: "#8b5cf6",
   Interview: "#f97316",
   Offer: "#16a34a",
   Rejected: "#dc2626",
@@ -331,6 +332,7 @@ function JobsPage() {
             >
               <option value="">Select status</option>
               <option value="Applied">Applied</option>
+              <option value="Ongoing">Ongoing</option>
               <option value="Interview">Interview</option>
               <option value="Offer">Offer</option>
               <option value="Rejected">Rejected</option>
@@ -382,6 +384,7 @@ function JobsPage() {
         >
           <option value="">All statuses</option>
           <option value="Applied">Applied</option>
+          <option value="Ongoing">Ongoing</option>
           <option value="Interview">Interview</option>
           <option value="Offer">Offer</option>
           <option value="Rejected">Rejected</option>

@@ -21,7 +21,7 @@ This is a personal job-application tracker (each user manages their own applicat
 
 - User registration and login secured with JWT authentication and BCrypt password hashing.
 - Create, edit, delete, search, filter, and sort job applications.
-- Status tracking (Applied / Interview / Offer / Rejected) with color-coded badges.
+- Status tracking (Applied / Ongoing / Interview / Offer / Rejected) with color-coded badges.
 - Automatic due/overdue follow-up reminders shown on the Jobs page.
 - Dashboard with application counts by status, response/interview/offer rate, upcoming follow-ups, and drill-down lists for edited and deleted applications.
 - Duplicate-application detection.
