@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jobboard.backend.model.Job;
+import com.jobboard.backend.repository.DeletedJobRepository;
 import com.jobboard.backend.repository.JobRepository;
 import com.jobboard.backend.repository.UserRepository;
 
@@ -30,11 +31,14 @@ class JobServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private DeletedJobRepository deletedJobRepository;
+
     private JobService jobService;
 
     @BeforeEach
     void setUp() {
-        jobService = new JobService(jobRepository, userRepository);
+        jobService = new JobService(jobRepository, userRepository, deletedJobRepository);
     }
 
     @Test

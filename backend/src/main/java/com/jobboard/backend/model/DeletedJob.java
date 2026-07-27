@@ -1,6 +1,6 @@
 package com.jobboard.backend.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,8 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "job")
-public class Job {
+@Table(name = "deleted_job")
+public class DeletedJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,13 +20,9 @@ public class Job {
 
     private String role;
 
-    private String status;
-
     private String ownerUsername;
 
-    private LocalDate followUpDate;
-
-    private boolean edited = false;
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;
@@ -52,14 +48,6 @@ public class Job {
         this.role = role;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getOwnerUsername() {
         return ownerUsername;
     }
@@ -68,19 +56,11 @@ public class Job {
         this.ownerUsername = ownerUsername;
     }
 
-    public LocalDate getFollowUpDate() {
-        return followUpDate;
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 
-    public void setFollowUpDate(LocalDate followUpDate) {
-        this.followUpDate = followUpDate;
-    }
-
-    public boolean isEdited() {
-        return edited;
-    }
-
-    public void setEdited(boolean edited) {
-        this.edited = edited;
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

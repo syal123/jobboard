@@ -17,6 +17,15 @@ interface Job {
   status: string;
   ownerUsername: string;
   followUpDate: string | null;
+  edited?: boolean;
+}
+
+interface DeletedJob {
+  id: number;
+  company: string;
+  role: string;
+  ownerUsername: string;
+  deletedAt: string;
 }
 
 interface DashboardSummary {
@@ -25,6 +34,8 @@ interface DashboardSummary {
   upcomingFollowUps: Job[];
   deletedJobsCount: number;
   editedJobsCount: number;
+  editedJobs: Job[];
+  deletedJobs: DeletedJob[];
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -129,12 +140,45 @@ function DashboardPage() {
       ]
     : [];
 
-  const filteredJobs =
+  interface DisplayRow {
+    id: number;
+    company: string;
+    role: string;
+    rightLabel: string;
+  }
+
+  const displayRows: DisplayRow[] =
     selectedFilter === null
       ? []
       : selectedFilter === "ALL"
-      ? allJobs
-      : allJobs.filter((job) => job.status === selectedFilter);
+      ? allJobs.map((job) => ({
+          id: job.id,
+          company: job.company,
+          role: job.role,
+          rightLabel: `${job.status} · ${job.followUpDate ?? "-"}`,
+        }))
+      : selectedFilter === "EDITED"
+      ? (summary?.editedJobs ?? []).map((job) => ({
+          id: job.id,
+          company: job.company,
+          role: job.role,
+          rightLabel: `${job.status} · ${job.followUpDate ?? "-"}`,
+        }))
+      : selectedFilter === "DELETED"
+      ? (summary?.deletedJobs ?? []).map((job) => ({
+          id: job.id,
+          company: job.company,
+          role: job.role,
+          rightLabel: `Deleted ${job.deletedAt ? new Date(job.deletedAt).toLocaleDateString() : ""}`,
+        }))
+      : allJobs
+          .filter((job) => job.status === selectedFilter)
+          .map((job) => ({
+            id: job.id,
+            company: job.company,
+            role: job.role,
+            rightLabel: `${job.status} · ${job.followUpDate ?? "-"}`,
+          }));
 
   return (
     <div style={cardStyle}>
@@ -177,12 +221,13 @@ function DashboardPage() {
           ))}
 
         <div
+          className="stat-card-clickable"
           style={{
             ...statCardStyle,
             minWidth: 140,
             borderTop: "3px solid #d97706",
-            cursor: "default",
           }}
+          onClick={() => setSelectedFilter("EDITED")}
         >
           <div style={{ fontSize: 24, fontWeight: 700, color: "#d97706" }}>
             {summary?.editedJobsCount}
@@ -191,12 +236,13 @@ function DashboardPage() {
         </div>
 
         <div
+          className="stat-card-clickable"
           style={{
             ...statCardStyle,
             minWidth: 140,
             borderTop: "3px solid #64748b",
-            cursor: "default",
           }}
+          onClick={() => setSelectedFilter("DELETED")}
         >
           <div style={{ fontSize: 24, fontWeight: 700, color: "#64748b" }}>
             {summary?.deletedJobsCount}
@@ -262,7 +308,14 @@ function DashboardPage() {
             }}
           >
             <h3 style={{ ...sectionHeadingStyle, margin: 0 }}>
-              Showing: {selectedFilter === "ALL" ? "All Applications" : `${selectedFilter} Applications`}
+              Showing:{" "}
+              {selectedFilter === "ALL"
+                ? "All Applications"
+                : selectedFilter === "EDITED"
+                ? "Edited Jobs"
+                : selectedFilter === "DELETED"
+                ? "Deleted Jobs"
+                : `${selectedFilter} Applications`}
             </h3>
             <button
               type="button"
@@ -281,27 +334,25 @@ function DashboardPage() {
               Clear filter
             </button>
           </div>
-          {filteredJobs.length > 0 ? (
+          {displayRows.length > 0 ? (
             <div style={rowListStyle}>
-              {filteredJobs.map((job, index) => (
+              {displayRows.map((row, index) => (
                 <div
-                  key={job.id}
+                  key={row.id}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     padding: "12px 16px",
                     borderBottom:
-                      index === filteredJobs.length - 1 ? "none" : "1px solid #e2e8f0",
+                      index === displayRows.length - 1 ? "none" : "1px solid #e2e8f0",
                     backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8fafc",
                   }}
                 >
                   <div>
-                    <span style={{ fontWeight: 600 }}>{job.company}</span>
-                    <span style={{ color: "#64748b" }}> — {job.role}</span>
+                    <span style={{ fontWeight: 600 }}>{row.company}</span>
+                    <span style={{ color: "#64748b" }}> — {row.role}</span>
                   </div>
-                  <div style={{ color: "#334155" }}>
-                    {job.status} · {job.followUpDate ?? "-"}
-                  </div>
+                  <div style={{ color: "#334155" }}>{row.rightLabel}</div>
                 </div>
               ))}
             </div>
