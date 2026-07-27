@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.jobboard.backend.exception.BusinessException;
 import com.jobboard.backend.model.DeletedJob;
 import com.jobboard.backend.model.Job;
 import com.jobboard.backend.repository.DeletedJobRepository;
@@ -37,7 +38,7 @@ public class JobService {
     public Job updateJob(Long id, Job updateJob, String ownerUsername) {
         Job existingJob = jobRepository.findById(id)
                 .filter(job -> job.getOwnerUsername().equals(ownerUsername))
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new BusinessException("Job not found"));
         existingJob.setCompany(updateJob.getCompany());
         existingJob.setRole(updateJob.getRole());
         existingJob.setStatus(updateJob.getStatus());
@@ -56,7 +57,7 @@ public class JobService {
     public void deleteJob(Long id, String ownerUsername) {
         Job existingJob = jobRepository.findById(id)
                 .filter(job -> job.getOwnerUsername().equals(ownerUsername))
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new BusinessException("Job not found"));
 
         DeletedJob deletedJob = new DeletedJob();
         deletedJob.setCompany(existingJob.getCompany());

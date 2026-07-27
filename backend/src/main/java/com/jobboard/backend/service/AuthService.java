@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jobboard.backend.exception.BusinessException;
 import com.jobboard.backend.model.User;
 import com.jobboard.backend.repository.UserRepository;
 
@@ -21,7 +22,7 @@ public class AuthService {
     public User register(String userName, String rawPassword, String firstName, String lastName,
             LocalDate dateOfBirth) {
         if (userRepository.findByUserName(userName).isPresent()) {
-            throw new RuntimeException("Username already present");
+            throw new BusinessException("Username already present");
         }
         User user = new User();
         user.setUserName(userName);
@@ -34,9 +35,9 @@ public class AuthService {
 
     public User login(String userName, String password) {
         User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("Invalid userName and password"));
+                .orElseThrow(() -> new BusinessException("Invalid userName and password"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid userName and password");
+            throw new BusinessException("Invalid userName and password");
         }
         return user;
     }

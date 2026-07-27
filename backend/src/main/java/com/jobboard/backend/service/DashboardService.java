@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.jobboard.backend.exception.BusinessException;
 import com.jobboard.backend.model.DeletedJob;
 import com.jobboard.backend.model.Job;
 import com.jobboard.backend.model.User;
@@ -43,7 +44,7 @@ public class DashboardService {
                 .sorted(Comparator.comparing(Job::getFollowUpDate))
                 .collect(Collectors.toList());
 
-        User user = userRepository.findByUserName(ownerUsername).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUserName(ownerUsername).orElseThrow(() -> new BusinessException("User not found"));
 
         List<Job> editedJobs = jobs.stream()
                 .filter(Job::isEdited)
