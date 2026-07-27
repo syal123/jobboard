@@ -100,6 +100,9 @@ function JobsPage() {
   const [followUpDate, setFollowUpDate] = useState("");
   const [editingJobId, setEditingJobId] = useState<number | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
   const fetchJobs = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -180,6 +183,26 @@ function JobsPage() {
   const today = new Date().toISOString().slice(0, 10);
   const dueFollowUps = jobs.filter((job) => job.followUpDate && job.followUpDate <= today);
 
+  const isDuplicate =
+    company.trim() !== "" &&
+    role.trim() !== "" &&
+    jobs.some(
+      (job) =>
+        job.id !== editingJobId &&
+        job.company.trim().toLowerCase() === company.trim().toLowerCase() &&
+        job.role.trim().toLowerCase() === role.trim().toLowerCase()
+    );
+
+  const visibleJobs = jobs.filter((job) => {
+    const matchesStatus = statusFilter === "" || job.status === statusFilter;
+    const term = searchTerm.trim().toLowerCase();
+    const matchesSearch =
+      term === "" ||
+      job.company.toLowerCase().includes(term) ||
+      job.role.toLowerCase().includes(term);
+    return matchesStatus && matchesSearch;
+  });
+
   return (
     <div style={cardStyle}>
       <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, color: "#dc2626" }}>💼 Jobs</h2>
@@ -251,6 +274,13 @@ function JobsPage() {
             />
           </label>
         </div>
+        {isDuplicate && (
+          <p style={{ color: "#b45309", marginBottom: 8, fontWeight: 600 }}>
+            ⚠️ You already have an application for {role} at {company}. Submitting will add a
+            second one.
+          </p>
+        )}
+
         <button type="submit" style={primaryButtonStyle}>
           {editingJobId !== null ? "Update Job" : "Add Job"}
         </button>
@@ -262,6 +292,27 @@ function JobsPage() {
       </form>
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
+        <input
+          type="text"
+          placeholder="Search by company or role..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ ...inputStyle, maxWidth: 280, marginTop: 0 }}
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{ ...inputStyle, maxWidth: 180, marginTop: 0 }}
+        >
+          <option value="">All statuses</option>
+          <option value="Applied">Applied</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
 
       {loading ? (
         <p>Loading jobs...</p>
@@ -278,7 +329,7 @@ function JobsPage() {
               </tr>
             </thead>
             <tbody>
-              {jobs.map((job) => (
+              {visibleJobs.map((job) => (
                 <tr key={job.id}>
                   <td>{job.company}</td>
                   <td>{job.role}</td>
@@ -307,6 +358,9 @@ function JobsPage() {
               ))}
             </tbody>
           </table>
+          {visibleJobs.length === 0 && (
+            <p style={{ padding: 16, color: "#64748b" }}>No jobs match your search/filter.</p>
+          )}
         </div>
       )}
 
